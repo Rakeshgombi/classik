@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>{% block title %}{% endblock title %}</title>
+  <style>
+    .bg-light {
+      background: #ddd !important;
+    }
+  </style>
+  {% block style %}{% endblock style %}
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top" id="navbar">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/" title="Logo"><img src="{% static 'logo/rvce_logo.jfif' %}" width="35" alt="logo"
+          class="rounded-circle"> Classroom</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <!-- <li class="nav-item">
+            <a class="nav-link" href="#">To-do</a>
+          </li> -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Classes
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+              {% for course in courses %}
+              <li data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{course.courseName}}"><a
+                  class="dropdown-item" href="/classroom/{{course.sno}}/">{{course.courseName|truncatechars:"15"}}</a>
+              </li>
+              {% empty %}
+              {% if request.user.is_authenticated %}
+              <li>
+                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#createClass">Create
+                  Class</button>
+              </li>
+              <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#joinClass">Join
+                  Class</button></li>
+              {% else %}
+              <li>
+                <button type="button" class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSignIn"
+                  aria-controls="offcanvasRight" title="Signup to post your own Blog">Create
+                  Class</button>
+              </li>
+              <li>
+                <button type="button" class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSignIn"
+                  aria-controls="offcanvasRight" title="Signup to post your own Blog">Join
+                  Class</button>
+              </li>
+              {% endif %}
+              {% endfor %}
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link h4 py-0 pt-1" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              +
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              {% if request.user.is_authenticated %}
+              <li>
+                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#createClass">Create
+                  Class</button>
+              </li>
+              <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#joinClass">Join
+                  Class</button></li>
+              {% else %}
+              <li>
+                <button type="button" class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSignIn"
+                  aria-controls="offcanvasRight" title="Signup to post your own Blog">Create
+                  Class</button>
+              </li>
+              <li>
+                <button type="button" class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSignIn"
+                  aria-controls="offcanvasRight" title="Signup to post your own Blog">Join
+                  Class</button>
+              </li>
+              {% endif %}
+            </ul>
+          </li>
+        </ul>
+        </ul>
+      </div>
+      <ul class="navbar-nav mb-2">
+        <li class="nav-item ">
+          <form class="d-flex" action="/search/" method="GET">
+            <input class="form-control form-control-sm flex-auto me-1 border-success input-sm" type="search"
+              placeholder="Search" aria-label="Search" name="query" id="query" style="border: 1px solid #50555c;"
+              title="Search by coursename, teacher, code, description...">
+            <button class="btn btn-outline-success btn-sm" type="submit"><i class="fa fa-search"
+                aria-hidden="true"></i></button>
+          </form>
+        </li>
+        <li class="nav-item mt-2 mx-md-2 mt-md-0">
+          {% if request.user.is_authenticated %}
+          <div class="dropdown mx-1">
+            <a class="btn btn-outline-primary dropdown-toggle btn-sm" href="#" role="button" id="dropdownMenuLink"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="far fa-user"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-lg-end p-3 border" aria-labelledby="dropdownMenuLink">
+        </li>
+        <li class="list-item">
+          <p>{{request.user}}</p>
+        </li>
+        <li class="py-2"><a class="text-decoration-none  d-block border-top" href="/logout/"
+            title="Logout from this site"><i class="fas fa-sign-out-alt"></i>
+            Logout</a></li>
+      </ul>
+      {% else %}
+      <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasSignUp" aria-controls="offcanvasRight" title="Signup to post your own Blog"><i
+          class="fas fa-user-plus"></i>SignUp</button>
+
+      <div class="offcanvas offcanvas-end  bg-dark text-light" tabindex="-1" id="offcanvasSignUp"
+        aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header">
+          <h5 id="offcanvasRightLabel">Signup</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+            aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body form-group-sm">
+          <a class="navbar-brand logo d-flex mx-auto mb-3" href="/"> </a>
+          <form class="form-signup needs-validation" id="otp-form" method="POST" action="/otp/">{% csrf_token %}
+            <div class="mb-2">
+              <label for="email">Email</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="mb-2">
+              <button type="submit" class="btn btn-success btn-sm" id="send-otp">Send Otp</button>
+              <small class="text-success" id="otp-sent-msg"></small>
+            </div>
+          </form>
+          <form class="form-signup needs-validation" method="POST" action="/signup/">{% csrf_token %}
+            <div class="row mb-1 bg-dark">
+              <div class="col-md-6 mb-1">
+                <label for="fName">First name</label>
+                <input type="text" class="form-control input-sm" id="fname" placeholder="First Name" name="fname"
+                  required="">
+              </div>
+              <div class="col-md-6 mb-1 ">
+                <label for="lname">Last name</label>
+                <input type="text" class="form-control" id="lname" placeholder="Last Name" name="lname" required="">
+              </div>
+            </div>
+            <div class="mb-1">
+              <label for="username">Username</label>
+              <div class="input-group border-none">
+                <input type="text" class="form-control" id="username" name="username" placeholder="Username"
+                  required="">
+              </div>
+              <small class="">Username can only contain numbers and alphabets</small>
+            </div>
+            <div class="mb-1">
+              <label for="otp">Enter OTP</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter otp" required="">
+              </div>
+            </div>
+
+            <div class="mb-1">
+              <label for="pass1">Enter Password</label>
+              <input type="password" class="form-control" id="pass1" name="pass1" placeholder="Enter Password"
+                required="">
+            </div>
+
+            <div class="mb-3">
+              <label for="pass2">Re-enter Password</label>
+              <input type="password" class="form-control" id="pass2" name="pass2" placeholder="Confirm Password">
+            </div>
+            <button class="btn btn-outline-primary btn-block" type="submit">Sign up</button>
+          </form>
+        </div>
+      </div>
+      <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasSignIn" aria-controls="offcanvasRight" title="SignIn to post your own Blog"><i
+          class="fas fa-sign-in-alt"></i>SignIn</button>
+
+      <div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="offcanvasSignIn"
+        aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header">
+          <h5 id="offcanvasRightLabel">Signin</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+            aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <form class="form-signin" method="POST" action="/login/">
+            {% csrf_token %}
+            <a class="navbar-brand logo d-flex mx-auto" href="/"> </a>
+
+            <div class="mb-1  mt-4">
+              <label for="loginusername">Username</label>
+              <div class="input-group border-none">
+                <input type="text" class="form-control" id="loginusername" name="loginusername" placeholder="Username"
+                  required="">
+              </div>
+            </div>
+            <div class="mb-1">
+              <label for="loginPassword">Enter Password</label>
+              <input type="password" class="form-control" id="loginPassword" name="loginPassword"
+                placeholder="Enter Password" required="">
+            </div>
+
+            <button class="btn btn-outline-primary mt-3" type="submit">Sign in</button>
+          </form>
+          <div class="mt-3 text-center">
+            <small>Do not have account <a class="text-link pe-auto cursor-pointer" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasSignUp" aria-controls="offcanvasRight" style="cursor: pointer;">
+                SignUp</a> or <a href="/password_reset/" class="text-link">forgot passwoord?</a></small>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      </li>
+    </div>
+    </div>
+  </nav>
+
+
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-0" role="alert">
+    <strong>Mesage: </strong>{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"
+      aria-label="Close"></button>
+  </div>
+  {% endfor %}
+
+  <!-- Create Class Modal -->
+  <div class="modal fade  text-dark" id="createClass" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Create Class</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/createclass/" method="post">{% csrf_token %}
+            <div class="input-group-sm mb-3">
+              <label for="courseCode" class="form-label">Course Code (required)</label>
+              <input type="text" class="form-control" id="courseCode" name="courseCode" required
+                placeholder="Enter Course Code">
+            </div>
+            <div class="input-group-sm mb-3">
+              <label for="courseName" class="form-label">Course Name</label>
+              <input type="text" class="form-control" id="courseName" name="courseName" placeholder="Enter Course Name">
+            </div>
+            <div class="input-group-sm mb-3">
+              <label for="courseSection" class="form-label">Section</label>
+              <input type="text" class="form-control" id="courseSection" name="courseSection"
+                placeholder="Enter Section">
+              <!-- <input type="hidden" name="user" > -->
+            </div>
+            <div class="input-group-sm mb-3">
+              <label for="courseDesc" class="form-label">Course Description(optional)</label>
+              <textarea class="form-control" id="courseDesc" name="courseDesc" rows="2"
+                placeholder="Enter Course description here"></textarea>
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-outline-success btn-sm">Create Class</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- End Create Class Modal -->
+
+  <!-- Join Class Modal -->
+  <div class="modal fade  text-dark" id="joinClass" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">join Class</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/joinclass/" method="post">{% csrf_token %}
+            <div class="input-group-sm mb-3">
+              <label for="joincode" class="form-label">Course Code (required)</label>
+              <input type="text" class="form-control" id="joincode" name="joincode" required
+                placeholder="Enter Course Code">
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-outline-success btn-sm">Join Class</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- End Join Class Modal -->
+
+  <!-- Edit Class Modal -->
+  <div class="modal fade  text-dark" id="editclass" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit Class Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/editclass/{{course.sno}}/" method="post">{% csrf_token %}
+            <div class="input-group-sm mb-3">
+              <label for="coursecode" class="form-label">Course Code (required)</label>
+              <input type="text" class="form-control" id="coursecode" name="courseCode" required
+                placeholder="Enter Course Code" value="{{course.courseCode}}">
+            </div>
+            <div class="input-group-sm mb-3">
+              <label for="coursename" class="form-label">Course Name</label>
+              <input type="text" class="form-control" id="coursename" name="courseName" placeholder="Enter Course Name"
+                value="{{course.courseName}}">
+            </div>
+            <div class="input-group-sm mb-3">
+              <label for="coursesec" class="form-label">Section</label>
+              <input type="text" class="form-control" id="coursesec" name="courseSection"
+                value="{{course.courseSection}}" placeholder="Enter Section">
+            </div>
+            <div class="input-group-sm mb-3">
+              <label for="courseDescription" class="form-label">Course Description(optional)</label>
+              <textarea class="form-control" id="courseDescription" name="courseDesc" rows="2"
+                placeholder="Enter Course description here">{{course.courseDesc}}</textarea>
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-outline-success btn-sm">Create Class</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- End Edit Class Modal -->
+
+  <!-- Delete Class Modal -->
+  <div class="modal fade" id="deleteclass" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Delete this class</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <span class="text-warning fs-3"><i class="fas fa-exclamation-triangle"></i></span> Once deleted you wont be
+          able to retrive back its contents and details. Are you sure you want to delete this classroom?
+        </div>
+        <div class="modal-footer">
+          <form action="/deleteclass/{{course.courseRefNo}}/" method="post">{% csrf_token %}
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger btn-sm">Yes Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Delete Class Modal -->
+  <main style="min-height: 80vh" onscroll="myFunction()">
+    {% block body %}{% endblock body %}
+  </main>
+  <footer class="footer mt-auto py-3 bg-dark">
+    <div class="container">
+      <span class="text-muted">Place sticky footer content here.</span>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+</body>
+
+
+{% block script %}{% endblock script %}
+<script>
+  
+  $(document).ready(function () {
+    $('#otp-form').submit(function () { // On form submit event
+      $.ajax({ // create an AJAX call...
+        data: $(this).serialize(), // get the form data
+        type: $(this).attr('method'), // GET or POST
+        url: $(this).attr('action'), // the file to call
+        success: function (response) { // on success..
+          $("#send-otp").addClass("disabled")
+          $("#otp-sent-msg").text(" !Otp Sent")
+        },
+        error: function (e, x, r) { // on error..
+          console.log(e); // update the DIV
+        }
+      });
+      return false;
+    });
+  });
+
+
+  window.setTimeout(function () {
+    $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+      $(this).remove();
+    });
+  }, 3000);
+
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
+  window.onscroll = function () { myFunction() };
+
+  function myFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      $("#navbar").addClass("shadow")
+    } else {
+      $("#navbar").removeClass("shadow")
+    }
+  }
+</script>
+
+</html>
