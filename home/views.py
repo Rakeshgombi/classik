@@ -25,13 +25,17 @@ def index(request):
 
 def search(request):
     query = request.GET.get("query", "")
-    courseName = Course.objects.filter(courseName__icontains=query, courseStudent=request.user)
-    courseCode = Course.objects.filter(courseCode__icontains=query, courseStudent=request.user)
-    courseDesc = Course.objects.filter(courseDesc__icontains=query, courseStudent=request.user)
-    coursesection = Course.objects.filter(courseSection__icontains=query, courseStudent=request.user)
+    courseName = Course.objects.filter(
+        courseName__icontains=query, courseStudent=request.user)
+    courseCode = Course.objects.filter(
+        courseCode__icontains=query, courseStudent=request.user)
+    courseDesc = Course.objects.filter(
+        courseDesc__icontains=query, courseStudent=request.user)
+    coursesection = Course.objects.filter(
+        courseSection__icontains=query, courseStudent=request.user)
     courses = courseName.union(courseCode, courseDesc, coursesection)
     print(courses)
-    return render(request, "search.html", {"courses": courses, 'query':query})
+    return render(request, "search.html", {"courses": courses, 'query': query})
 
 
 def classRoom(request, slug):
@@ -50,26 +54,50 @@ def classRoom(request, slug):
                                            annMaterial=annMaterial, annFile=annFile, annTitle=annTitle, annContent=annContent)
                 announcement.save()
                 messages.success(
-                request, "New Announcement was added to this Classroom")
+                    request, "New Announcement was added to this Classroom")
                 return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
             except Exception as e:
                 announcement = Announcemet(
                     annCreator=request.user, annMaterial=annMaterial, annTitle=annTitle, annContent=annContent)
                 announcement.save()
-                messages.success(
+
+                for i in course.courseStudent.all():
+                    print(i.email)
+                    subject, from_email, to = f'''New announcement: "{annTitle}"''', 'rakeshgombi18@gmail.com', f'{i.email}'
+                    text_content = 'This is an important message.'
+                    html_content = f'''<div style="background: #eee; padding: 15px; margin: 0; display: inline-block; border-radius:10px;font-family:Google Sans,Roboto,Helvetica,Arial,sans-serif width: 100%;">
+                    <div class="container" style="padding: 10px; border-radius: 10px; background-color: rgb(255, 255, 255); display: inline-block; margin:0 auto; width: 100%;">
+                    <h4>Hi {i.first_name} {i.last_name},</h4>
+                    <p><span style="text-transform: capitalize;">{request.user.first_name} {request.user.last_name}</span> posted a new announcement in {course}</p>
+                    <div class="content" style="border: 2px solid rgba(92, 92, 92, 0.541); border-left: 10px solid #333; width:90%; box-shadow: 2px 2px 8px 10px rgba(92, 92, 92, 0.541); padding: 20px 10px; border-radius: 10px; margin: 30px auto;">
+                    <h5 style="margin: 0px; color: #333;">{annTitle}</h5>
+                    <p>Announcement Title</p>
+                    <div><a href='{request.META.get("HTTP_REFERER", "redirect_if_referer_not_found")}' style="border:1px solid #dadce0;font-family:Google Sans,Roboto,Helvetica,Arial,sans-serif;color:#202124;border-radius:4px;box-sizing:border-box;display:inline-block;font-size:14px;height:32px;line-height:30px;padding:0 24px;text-decoration:none;letter-spacing:0.25px;font-weight:500" target="_blank">Open</a></div>
+                    <p style="color:#555;font-weight: 100;"><small>Posted by {request.user.first_name} {request.user.last_name}</small></p>
+                    </div>
+                    <p style="text-align: center;">Good luck! Have a nice day😊</p>
+                    </div>
+                    <p style="text-align: center; color: rgb(143, 80, 80);"><img src="" alt=""></p>
+                    </div>'''
+                    msg = EmailMultiAlternatives(
+                        subject, text_content, from_email, [to])
+                    msg.attach_alternative(html_content, "text/html")
+                    msg.send()
+
+            messages.success(
                 request, "New Announcement was added to this Classroom")
-                return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+            return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
         else:
             messages.warning(
                 request, "Sorry, you are not authorised to add announcements to this class")
             return redirect("/")
     else:
         if request.user in course.courseStudent.all():
-                user = request.user
-                courses = Course.objects.filter(courseStudent=user)
-                context = {"courses": courses, "course": course,
-                        "announcements": announcement}
-                return render(request, "classroom.html", context)
+            user = request.user
+            courses = Course.objects.filter(courseStudent=user)
+            context = {"courses": courses, "course": course,
+                       "announcements": announcement}
+            return render(request, "classroom.html", context)
         else:
             messages.warning(
                 request, "Sorry, you are not authorized to enter into that class")
@@ -133,13 +161,16 @@ def joinClass(request):
             print(course)
             course.courseStudent.add(request.user)
             course.save()
-            messages.info(request, "Congratulations! You have joined this classroom")
+            messages.info(
+                request, "Congratulations! You have joined this classroom")
         else:
-            messages.info(request, "Oops, You have already joined this classroom")
+            messages.info(
+                request, "Oops, You have already joined this classroom")
         return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
     else:
         messages.warning(request, "Sorry, Unknown error occured")
         return redirect("/")
+
 
 def people(request, slug):
     course = get_object_or_404(Course, sno=slug)
@@ -148,9 +179,9 @@ def people(request, slug):
         context = {"courses": courses, "course": course}
         return render(request, "people.html", context)
     else:
-        messages.warning(request, "Sorry, you are not authorized to enter into that class")
+        messages.warning(
+            request, "Sorry, you are not authorized to enter into that class")
     return redirect("/")
-    
 
 
 # Authentication Functions
@@ -168,16 +199,16 @@ def sendOtp(request):
             sentOtp += str(random.randrange(0, 10))
         print(sentOtp)
 
-        subject, from_email, to = f"Otp for your Blogging account at Poster", 'rakeshgombi18@gmail.com', f'{email}'
-        text_content = f'Your OTP for email verification at Poster is <strong>{sentOtp}'
-        html_content = f''' <div style="background: #eee; padding: 15px; margin: 0; display: inline-block; border-radius:10px ">
+        subject, from_email, to = f"Otp for your RVCE Classroom account", 'rakeshgombi18@gmail.com', f'{email}'
+        text_content = f'Your OTP for email verification at RVCE Classroom is <strong>{sentOtp}'
+        html_content = f'''<div style="background: #eee; padding: 15px; margin: 0; display: inline-block; border-radius:10px ">
                     <div class="container"
                     style="padding: 10px; border-radius: 10px; background-color: rgb(255, 255, 255); display: inline-block; margin:0 auto">
                     <h4>Hi There,</h4>
-                    <p>Your OTP for email verification at Poster is <strong>{sentOtp} </strong></p>
+                    <p>Your OTP for email verification at RVCE Classroom is <strong>{sentOtp} </strong></p>
                     <p>Good luck! Have a nice day😊</p>
                     </div>
-                    <p style="text-align: center; color: rgb(93, 93, 93);">Thank you for blogging with poster</p>
+                    <p style="text-align: center; color: rgb(93, 93, 93);">Thank you for Joining the RVCE Classroom</p>
                     </div>'''
         msg = EmailMultiAlternatives(
             subject, text_content, from_email, [to])
