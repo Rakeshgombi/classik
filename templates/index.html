@@ -1,17 +1,92 @@
 {% extends 'base.html' %}
 {% block title %}RVCE Classroom | Home{% endblock title %}
+{% load static %}
 
 {% block style %}
 <style>
-.hover-effect:hover{
-  text-decoration: underline #fff 1px !important ;
-}
+  .hover-effect:hover {
+    text-decoration: underline #fff 1px !important;
+  }
+
+  .carousel-item {
+
+    position: relative !important;
+    width: 100%;
+  }
+
+  .carousel-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  .carousel-item1::before {
+    opacity: 1;
+    background: url("{% static 'background/bg1.jpg' %}") no-repeat center center/cover;
+  }
+
+  .carousel-item2::before {
+    opacity: 01;
+    background: url("{% static 'background/bg2.jpg' %}") no-repeat center center/cover;
+    /* transform: rotate(-1deg); */
+  }
+
+  .carousel-item3::before {
+    background: url("{% static 'background/bg3.jpg' %}") no-repeat center center/cover;
+    opacity: 01;
+  }
 </style>
 {% endblock style %}
 {% block body %}
-<div class="album py-5">
 
-  <div class="container"  >
+
+<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+
+  <div class="carousel-inner">
+    <div class="carousel-item carousel-item1">
+
+      <div class="container d-flex align-items-center justify-contents-center">
+        <div class="carousel-caption text-start text-white">
+          <h2>Keep Educating with your ideas to the world</h2>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item carousel-item2 active">
+
+      <div class="container">
+        <div class="carousel-caption">
+          <h1 class="special">RVCE Classrooms</h1>
+          <h2>Classroom helps you to connect with your classmates and share your ideas</h2>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item carousel-item3">
+
+      <div class="container">
+        <div class="carousel-caption text-end">
+          <h2>Join RVCE Classroom to connect with your classmates</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+{% if courses|length >= 1 %}
+<div class="album py-5">
+  <div class="container">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
       {% for course in courses %}
       <div class="col rounded">
@@ -19,7 +94,7 @@
           <a href="/classroom/{{course.sno}}" class="text-decoration-none hover-effect">
             <div class="col bg-{{course.theme}} text-light p-3  rounded" style="height:150px">
               <h4 class="card-text" data-bs-toggle="tooltip" data-bs-placement="bottom"
-          title="Course Name: {{course.courseName|title}}">{{course.courseName|title|truncatechars:"50"}}</h4>
+                title="Course Name: {{course.courseName|title}}">{{course.courseName|title|truncatechars:"50"}}</h4>
               <p class="card-text my-0"><small>{{course.courseSection|upper}}</small></p>
               <p class="card-text ">{{course.courseCreator.get_full_name|title}}</p>
             </div>
@@ -39,7 +114,7 @@
     </div>
   </div>
 </div>
-
+{% endif %}
 {% endblock body %}
 
 {% block script %}
@@ -50,9 +125,21 @@
   var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
   })
-  function myFunction() {
-    console.log("HEHE");
-}
+
+  let height = $("#navbar").innerHeight();
+
+  let corousal = Array.from(document.getElementsByClassName("carousel-item"))
+
+
+  {% if courses|length < 1 %}
+  corousal.forEach(element => {
+    element.style.height = `calc(100vh - ${height}px)`;
+  });
+  {% else %}
+  corousal.forEach(element => {
+  element.style.height = `60vh`;
+  });
+  {% endif %}
 
 </script>
 {% endblock script %}

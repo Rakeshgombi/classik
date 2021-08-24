@@ -116,7 +116,7 @@
             <span class="p-0 text-secondary fw-bold fs-6"><small>{{material.annTimestamp}}</small></span>
           </div>
         </div>
-        <div class="col-1 d-flex justify-content-end text-secondary fw-bold align-items-center">
+        <!-- <div class="col-1 d-flex justify-content-end text-secondary fw-bold align-items-center">
 
           <div class="position-absolute menu" style="top: 0; right: 0;">
             <a class="nav-link text-secondary fs-6" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
@@ -125,7 +125,6 @@
             {% if request.user.is_authenticated and request.user == course.courseCreator or request.user == material.annCreator %}
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li>
-                <!-- Button trigger modal -->
                 <button type="button" class="dropdown-item" data-bs-toggle="modal"
                   data-bs-target="#editAnnouncement{{material.id}}">
                   <i class="far fa-edit"></i> Edit
@@ -138,7 +137,7 @@
 
             {% endif %}
           </div>
-        </div>
+        </div> -->
       </div>
       <h5 class="card-title">{{material.annTitle}}</h5>
       <p class="card-text">{{material.annContent|safe}}</p>
@@ -149,7 +148,7 @@
 
 
     <!-- Edit Announcement Modal -->
-    <div class="modal fade" id="editAnnouncement{{material.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+    <!-- <div class="modal fade" id="editAnnouncement{{material.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
       aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -166,7 +165,7 @@
               </div>
               <div class="mb-3">
                 <label for="annContent" class="form-label">Add new announcement</label>
-                <textarea class="form-control" id="annContent" name="annContent">{{material.annContent}}</textarea>
+                <textarea class="form-control" id="annContentmodal{{material.id}}"  name="annContent">{{material.annContent|safe}}</textarea>
               </div>
               <div class="mb-3">
                 {% if material.annFile%}
@@ -186,10 +185,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- End Edit Announcement -->
     <!-- Delete Class Modal -->
-    <div class="modal fade" id="deleteannouncement{{material.id}}" data-bs-backdrop="static" data-bs-keyboard="false"
+    <!-- <div class="modal fade" id="deleteannouncement{{material.id}}" data-bs-backdrop="static" data-bs-keyboard="false"
       tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -210,7 +209,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- End Delete Class Modal -->
     {% endfor %}
   </div>
@@ -223,7 +222,9 @@
 <script src="https://cdn.ckeditor.com/4.16.1/full-all/ckeditor.js"></script>
 <script>
   CKEDITOR.replace('annContent');
-
+  {% for material in announcements %}
+  CKEDITOR.replace('annContentmodal{{material.id}}');
+  {% endfor %}
   CKEDITOR.config.toolbarCanCollapse = true;
   CKEDITOR.config.height = 100;
 

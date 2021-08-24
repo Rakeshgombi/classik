@@ -20,6 +20,10 @@
     .bg-light {
       background: #ddd !important;
     }
+    ::-webkit-scrollbar{
+      width: 10px;
+      background: #50555c1e;
+    }
   </style>
   {% block style %}{% endblock style %}
 </head>
@@ -376,11 +380,11 @@
   <main style="min-height: 80vh" onscroll="myFunction()">
     {% block body %}{% endblock body %}
   </main>
-  <footer class="footer mt-auto py-3 bg-dark">
+  <!-- <footer class="footer mt-auto py-3 bg-dark">
     <div class="container">
-      <span class="text-muted">Place sticky footer content here.</span>
+      <span class="text-muted">copyright<i class="fa fa-copyright" aria-hidden="true"></i></span>
     </div>
-  </footer>
+  </footer> -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
@@ -427,6 +431,7 @@
       $("#navbar").addClass("shadow")
     } else {
       $("#navbar").removeClass("shadow")
+
     }
   }
 </script>
