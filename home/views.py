@@ -53,16 +53,40 @@ def classRoom(request, slug):
                 announcement = Announcemet(annCreator=request.user,
                                            annMaterial=annMaterial, annFile=annFile, annTitle=annTitle, annContent=annContent)
                 announcement.save()
+
+                for i in course.courseStudent.all():
+                    # print(i.email)
+                    subject, from_email, to = f'''New announcement: "{annTitle}"''', 'rakeshgombi18@gmail.com', f'{i.email}'
+                    text_content = 'This is an important message.'
+                    html_content = f'''<div style="background: #eee; padding: 15px; margin: 0; display: inline-block; border-radius:10px;font-family:Google Sans,Roboto,Helvetica,Arial,sans-serif width: 100%;">
+                    <div class="container" style="padding: 10px; border-radius: 10px; background-color: rgb(255, 255, 255); display: inline-block; margin:0 auto; width: 100%;">
+                    <h4>Hi {i.first_name} {i.last_name},</h4>
+                    <p><span style="text-transform: capitalize;">{request.user.first_name} {request.user.last_name}</span> posted a new announcement in {course}</p>
+                    <div class="content" style="border: 2px solid rgba(92, 92, 92, 0.541); border-left: 10px solid #333; width:90%; box-shadow: 2px 2px 8px 10px rgba(92, 92, 92, 0.541); padding: 20px 10px; border-radius: 10px; margin: 30px auto;">
+                    <h5 style="margin: 0px; color: #333;">{annTitle}</h5>
+                    <p>Announcement Title</p>
+                    <div><a href='{request.META.get("HTTP_REFERER", "redirect_if_referer_not_found")}' style="border:1px solid #dadce0;font-family:Google Sans,Roboto,Helvetica,Arial,sans-serif;color:#202124;border-radius:4px;box-sizing:border-box;display:inline-block;font-size:14px;height:32px;line-height:30px;padding:0 24px;text-decoration:none;letter-spacing:0.25px;font-weight:500" target="_blank">Open</a></div>
+                    <p style="color:#555;font-weight: 100;"><small>Posted by {request.user.first_name} {request.user.last_name}</small></p>
+                    </div>
+                    <p style="text-align: center;">Good luck! Have a nice day😊</p>
+                    </div>
+                    <p style="text-align: center; color: rgb(143, 80, 80);"><img src="" alt=""></p>
+                    </div>'''
+                    msg = EmailMultiAlternatives(
+                        subject, text_content, from_email, [to])
+                    msg.attach_alternative(html_content, "text/html")
+                    msg.send()
                 messages.success(
                     request, "New Announcement was added to this Classroom")
                 return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
             except Exception as e:
+                print(e)
                 announcement = Announcemet(
                     annCreator=request.user, annMaterial=annMaterial, annTitle=annTitle, annContent=annContent)
                 announcement.save()
 
                 for i in course.courseStudent.all():
-                    print(i.email)
+                    # print(i.email)
                     subject, from_email, to = f'''New announcement: "{annTitle}"''', 'rakeshgombi18@gmail.com', f'{i.email}'
                     text_content = 'This is an important message.'
                     html_content = f'''<div style="background: #eee; padding: 15px; margin: 0; display: inline-block; border-radius:10px;font-family:Google Sans,Roboto,Helvetica,Arial,sans-serif width: 100%;">
@@ -123,7 +147,9 @@ def createClass(request):
         course.save()
         course.courseStudent.add(request.user)
         course.save()
+        messages.success(request, "Course Created Successfully")
         return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
     else:
         messages.warning(request, "Sorry, You are not authorized to do that")
         return redirect("/")
@@ -153,19 +179,47 @@ def deleteclass(request, slug):
         return HttpResponse("404 Not Found")
 
 
+def editAnnouncement(request, slug):
+    if request.method == "POST":
+        annMaterial = get_object_or_404(Announcemet, id=slug)
+        annMaterial.annTitle = request.POST.get("annTitle", "")
+        annMaterial.annContent = request.POST.get("annContent", "")
+        annMaterial.save()
+        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+    else:
+        messages.warning(request, "Osrry, you are not authorized to do that")
+        return redirect("/")
+
+
+def deleteAnnouncement(request, slug):
+    if request.method == "POST":
+        annMaterial = get_object_or_404(Announcemet, id=slug)
+        annMaterial.delete()
+        print("Success", annMaterial)
+        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+    else:
+        return HttpResponse("404 Not Found")
+
+
 def joinClass(request):
     if request.method == "POST":
         joincode = request.POST["joincode"]
-        course = get_object_or_404(Course, courseRefNo=joincode)
-        if request.user not in course.courseStudent.all():
-            print(course)
-            course.courseStudent.add(request.user)
-            course.save()
-            messages.info(
-                request, "Congratulations! You have joined this classroom")
-        else:
-            messages.info(
-                request, "Oops, You have already joined this classroom")
+        try:
+            course = get_object_or_404(Course, courseRefNo=joincode)
+            if request.user not in course.courseStudent.all():
+                print(course)
+                course.courseStudent.add(request.user)
+                course.save()
+                messages.info(
+                    request, "Congratulations! You have joined this classroom")
+            else:
+                messages.info(
+                    request, "Oops, You have already joined this classroom")
+        except Exception as e:
+            print(Exception)
+            messages.warning(
+                request, "Sorry no such class Exist")
+
         return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
     else:
         messages.warning(request, "Sorry, Unknown error occured")

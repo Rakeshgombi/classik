@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}RVCE Classroom | Home{% endblock title %}
+{% block title %}Classik | Home{% endblock title %}
 {% load static %}
 
 {% block style %}
@@ -27,16 +27,19 @@
   .carousel-item1::before {
     opacity: 1;
     background: url("{% static 'background/bg1.jpg' %}") no-repeat center center/cover;
+    box-shadow: inset 0px 0px 1500px 60px rgb(1 1 1);
   }
 
   .carousel-item2::before {
     opacity: 01;
-    background: url("{% static 'background/bg2.jpg' %}") no-repeat center center/cover;
+    background: url("{% static 'background/bg3.jpg' %}") no-repeat center center/cover;
+    box-shadow: inset 0px 0px 1500px 60px rgb(1 1 1);
     /* transform: rotate(-1deg); */
   }
 
   .carousel-item3::before {
-    background: url("{% static 'background/bg3.jpg' %}") no-repeat center center/cover;
+    background: url("{% static 'background/bg2.jpg' %}") no-repeat center center/cover;
+    box-shadow: inset 0px 0px 1500px 60px rgb(1 1 1);
     opacity: 01;
   }
 </style>
@@ -50,7 +53,7 @@
     <div class="carousel-item carousel-item1">
 
       <div class="container d-flex align-items-center justify-contents-center">
-        <div class="carousel-caption text-start text-white">
+        <div class="carousel-caption text-center text-white">
           <h2>Keep Educating with your ideas to the world</h2>
           </p>
         </div>
@@ -60,16 +63,15 @@
 
       <div class="container">
         <div class="carousel-caption">
-          <h1 class="special">RVCE Classrooms</h1>
+          <h1 class="special">Classik</h1>
           <h2>Classroom helps you to connect with your classmates and share your ideas</h2>
         </div>
       </div>
     </div>
     <div class="carousel-item carousel-item3">
-
       <div class="container">
-        <div class="carousel-caption text-end">
-          <h2>Join RVCE Classroom to connect with your classmates</h2>
+        <div class="carousel-caption text-center">
+          <h2>Join Classik to connect with your classmates</h2>
         </div>
       </div>
     </div>
@@ -90,7 +92,7 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
       {% for course in courses %}
       <div class="col rounded">
-        <div class="card shadow-sm rounded" style="height:355px">
+        <div class="card shadow-lg rounded" style="height:355px">
           <a href="/classroom/{{course.sno}}" class="text-decoration-none hover-effect">
             <div class="col bg-{{course.theme}} text-light p-3  rounded" style="height:150px">
               <h4 class="card-text" data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -137,7 +139,7 @@
   });
   {% else %}
   corousal.forEach(element => {
-  element.style.height = `60vh`;
+    element.style.height = `60vh`;
   });
   {% endif %}
 
