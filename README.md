@@ -5,6 +5,4 @@ Classik is a web-based application where we can store, organize and manage our s
 
 ## Screenshots
 
-![Home Screen](screenshots/homescreen/468x300?text=Homescreen)
-
-  
+![HomeScreen](screenshots/homescreen.png/468x300?text=Homescreen)
