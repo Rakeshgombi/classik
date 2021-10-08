@@ -36,6 +36,6 @@ Classik is a web-based application where we can store, organize and manage our s
 ![all_peers](screenshots/all_peers.png?raw=true "all_peers")
 
 
-## Authors
+## Author
 
 - [@Rakeshgombi](https://www.github.com/Rakeshgombi)
