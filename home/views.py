@@ -267,16 +267,16 @@ def sendOtp(request):
             sentOtp += str(random.randrange(0, 10))
         print(sentOtp)
 
-        subject, from_email, to = f"Otp for your RVCE Classroom account", 'rakeshgombi18@gmail.com', f'{email}'
-        text_content = f'Your OTP for email verification at RVCE Classroom is <strong>{sentOtp}'
+        subject, from_email, to = f"OTP for email verification at Classik Account", 'rakeshgombi18@gmail.com', f'{email}'
+        text_content = f'Your OTP for email verification at Classik Account is <strong>{sentOtp}'
         html_content = f'''<div style="background: #eee; padding: 15px; margin: 0; display: inline-block; border-radius:10px ">
                     <div class="container"
                     style="padding: 10px; border-radius: 10px; background-color: rgb(255, 255, 255); display: inline-block; margin:0 auto">
                     <h4>Hi There,</h4>
-                    <p>Your OTP for email verification at RVCE Classroom is <strong>{sentOtp} </strong></p>
-                    <p>Good luck! Have a nice day😊</p>
+                    <p>Your OTP for email verification at Classik Account is is <strong>{sentOtp} </strong></p>
+                    <p>Good luck! Happy Learning 🎉</p>
                     </div>
-                    <p style="text-align: center; color: rgb(93, 93, 93);">Thank you for Joining the RVCE Classroom</p>
+                    <p style="text-align: center; color: rgb(93, 93, 93);">Thank you for Joining the Classic</p>
                     </div>'''
         msg = EmailMultiAlternatives(
             subject, text_content, from_email, [to])
