@@ -94,19 +94,49 @@
           class="fs-3 me-2 rounded-circle px-2" style="background: #9ea1a3; color: #ffffff;"><i
             class="fas fa-user-graduate"></i></span><span class="fs-4">{{student.get_full_name|title}}</span>
       </div>
-      <div class="col-auto col-1 d-flex justify-content-end align-items-center fs-4">
+      <div class="col-auto col-1 d-flex justify-content-end align-items-center">
+          {% if request.user.is_authenticated and request.user == course.courseCreator %}
+        <button type="button" class="dropdown-item fs-5 rounded-circle bg-hov " data-bs-toggle="modal" data-bs-target="#removeperson"><i
+              class="far fa-trash-alt"></i></button>
+              {% endif %}
         <a href="mailto:{{student.email}}" data-bs-toggle="tooltip" data-bs-placement="bottom"
           title="Mail to: {{student.email}}"
-          class="py-1 px-2 rounded-circle bg-hov d-flex justify-content-end align-items-center text-dark text-decoration-none bg-hov">
+          class="py-1 px-2 rounded-circle bg-hov d-flex justify-content-end align-items-center text-dark text-decoration-none bg-hov fs-4">
           <i class="far fa-envelope"></i>
         </a>
       </div>
     </li>
+
+    
+  <!-- Delete Class Modal -->
+  <div class="modal fade" id="removeperson" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Remove peer</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <span class="text-warning fs-3"><i class="fas fa-exclamation-triangle"></i></span> Are you sure that you want to remove this person from the Classroom?
+        </div>
+        <div class="modal-footer">
+          <form action="" method="post">{% csrf_token %}
+            <input type="hidden" name="person" value={{student.id}}>
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger btn-sm">Yes Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Delete Class Modal -->
     {% endif %}
     {% endfor %}
   </ul>
   {% endif %}
 </div>
+
 {% endblock body %}
 
 {% block script %}

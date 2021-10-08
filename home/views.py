@@ -179,6 +179,17 @@ def deleteclass(request, slug):
         return HttpResponse("404 Not Found")
 
 
+def leaveClass(request, slug):
+    if request.method == "POST":
+        course = get_object_or_404(Course, courseRefNo=slug)
+        course.courseStudent.remove(request.user)
+        messages.success(
+            request, "You left the Classroom, Successfully")
+        return redirect("/")
+    else:
+        return HttpResponse("404 Not Found")
+
+
 def editAnnouncement(request, slug):
     if request.method == "POST":
         annMaterial = get_object_or_404(Announcemet, id=slug)
@@ -231,6 +242,9 @@ def people(request, slug):
     courses = Course.objects.all()
     if request.user in course.courseStudent.all():
         context = {"courses": courses, "course": course}
+        if request.method == "POST":
+            person = request.POST.get("person", "")
+            course.courseStudent.remove(person)
         return render(request, "people.html", context)
     else:
         messages.warning(

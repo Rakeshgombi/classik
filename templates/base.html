@@ -143,8 +143,7 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
             aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body form-group-sm">
-          <a class="navbar-brand logo d-flex mx-auto mb-3" href="/"> </a>
+        <div class="offcanvas-body form-group-sm py-0">
           <form class="form-signup needs-validation" id="otp-form" method="POST" action="/otp/">{% csrf_token %}
             <div class="mb-2">
               <label for="email">Email</label>
@@ -208,8 +207,7 @@
             aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <form class="form-signin" method="POST" action="/login/">
-            {% csrf_token %}
+          <form class="form-signin" method="POST" action="/login/">{% csrf_token %}
             <a class="navbar-brand logo d-flex mx-auto" href="/"> </a>
 
             <div class="mb-1  mt-4">
