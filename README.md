@@ -12,7 +12,7 @@ Classik is a web-based application where we can store, organize and manage our s
 ![user_signup](screenshots/user_signup.png?raw=true "user_signup")
 
 ### User Signin
-![user_signin](screenshots/user_signup.png?raw=true "user_signin")
+![user_signin](screenshots/user_signin.png?raw=true "user_signin")
 
 ### After Signin
 ![after_signin](screenshots/after_signin.png?raw=true "after_signin")
